@@ -8,7 +8,7 @@ public class redItem_get : MonoBehaviour {
 
 			// activate other special abilities
 			Abilities.s.activateRed();
-			
+			Gamecontroller.s.redActive();
 			Destroy(this.gameObject);
 		}
 	}

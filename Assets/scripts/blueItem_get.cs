@@ -8,7 +8,7 @@ public class blueItem_get : MonoBehaviour {
 		if (other.tag == "Player") {
 			// activate other special abilities
 			Abilities.s.activateBlue();
-
+			Gamecontroller.s.blueActive();
 			Destroy(this.gameObject);
 		}
 	}

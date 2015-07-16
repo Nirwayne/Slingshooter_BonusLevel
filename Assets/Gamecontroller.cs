@@ -3,11 +3,12 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class Gamecontroller : MonoBehaviour {
+	public static Gamecontroller s;
 
 	// canvas with: countdown, score, ItemsGot ( blue, red)
 	public GameObject go_objective;
 	private Text txt_objective;
-
+	private string objective;
 
 	public GameObject blueIcon;
 	private Image img_blueIcon;
@@ -19,42 +20,87 @@ public class Gamecontroller : MonoBehaviour {
 	private Text txt_Score;
 	private int score;
 	public GameObject go_countdown;
+	private Text txt_countdown;
 	private int countdown;
 
 	public GameObject trees;
 
 
 	void Awake() {
+		s = this;
+
 		img_blueIcon = blueIcon.GetComponent<Image>();
 		img_redIcon = redIcon.GetComponent<Image>();
 
 		txt_Score = go_Score.GetComponent<Text>();
 		txt_objective = go_objective.GetComponent<Text>();
+		txt_countdown = go_countdown.GetComponent<Text>();
+
+		objective = "Find the blue item";
+		go_Score.SetActive(false);
+		go_countdown.SetActive(false);
+		trees.SetActive(false);
 	}
-	// find the blue item
-	// greyed blue and red icon
+	
+	void Update() {
+		// Update Score, Countdown, Objective
+		txt_Score.text = "Score " + score;
+		txt_countdown.text = "" + countdown;
+		txt_objective.text = objective;
 
-	// now find the red item
-	// full blue, greyed red icon
-
-	// activate the yellow item
-	// full blue and red icon
+	}
 
 	public void blueActive() {
 		// set blueIcon image to full opacity
-		//img_blueIcon.color.a = 1f;
+		Color fullAlpha = img_blueIcon.color;
+		fullAlpha.a = 1f;
+		img_blueIcon.color = fullAlpha;
+
+		objective = "Now find the red item";
+
 	}
 	public void redActive() {
 		// set redIcon image to full opacity
-		//img_redIcon.color.a = 1f;
+		Color fullAlpha = img_redIcon.color;
+		fullAlpha.a = 1f;
+		img_redIcon.color = fullAlpha;
+
+		objective = "Activate the yellow item";
 	}
 	public void yellowActive() {
-		// enable GameObject with trees
+		StartCoroutine(activatedYellow());
 	}
-	
-	// "Destroy as many trees as you can within the timelimit.
-	// They'll be destroyed short after they hit the ground or fall off from the arena."
-	// - show countdown 5 secs big, then set countdown to 60 seconds, add score to canvas
+
+	IEnumerator activatedYellow() {
+		// enable GameObject with trees
+		trees.SetActive(true);
+
+		go_countdown.SetActive(true);
+		objective = "Trees are destroyed short after they hit the ground or when they fall off from the arena.";
+		
+		// wait 5 secs
+		countdown = 5;
+		StartCoroutine(countdownCounter());
+		yield return new WaitForSeconds(5);
+
+		objective = "Destroy as many trees as you can within the timelimit";
+		//set countdown to 60 seconds, add score to canvas
+		countdown = 60;
+		go_Score.SetActive(true);
+	}
+
+
+	IEnumerator countdownCounter () {
+		yield return new WaitForSeconds(1);
+		countdown--;
+		StartCoroutine(countdownCounter());
+
+	}
+
+	public void AddScore(int reward) {
+		score += reward;
+		print (score);
+	}
 
 
 }
